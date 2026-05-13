@@ -442,6 +442,65 @@
 /* rp mobile handled in main 640px block */
 
 
+
+/* ── SVG icoon uitlijning ── */
+.filter-label svg,
+.icon-pill svg,
+.card-adres svg,
+.rating svg,
+.modal-detail svg,
+.rp-adres svg,
+.fp-card-tags svg,
+.kh-opt-icon svg,
+.kh-fab-icon svg,
+.auth-btn svg,
+.fp-remove-btn svg,
+.fp-note-display svg {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+.kh-opt-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: .4rem;
+}
+.kh-opt-icon svg {
+  width: 28px; height: 28px;
+}
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+}
+.modal-detail {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.icon-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+}
+.card-adres {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+}
+.rating {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+}
+/* Sluit-knop SVG */
+.modal-close svg,
+.kh-close svg,
+.auth-modal-close svg {
+  display: block;
+}
+
 /* ════════════════════════════════════════════
    MOBIEL — complete responsive laag
    Alles onder 640px
@@ -558,11 +617,11 @@
 <div class="filters-bar">
   <div class="filters-inner">
     <div class="filter-group">
-      <span class="filter-label">🍽 Cuisine</span>
+      <span class="filter-label"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg> Cuisine</span>
       <select id="cuisine"><option value="">Alle keukens</option></select>
     </div>
     <div class="filter-group">
-      <span class="filter-label">💶 Prijs</span>
+      <span class="filter-label"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Prijs</span>
       <select id="prijs">
         <option value="">Alle prijzen</option>
         <option value="€">€ — Budget</option>
@@ -571,17 +630,17 @@
       </select>
     </div>
     <div class="filter-group">
-      <span class="filter-label">✨ Vibe</span>
+      <span class="filter-label"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Vibe</span>
       <select id="vibe">
         <option value="">Alle sferen</option>
-        <option value="romantisch">💑 Romantisch</option>
-        <option value="casual">😎 Casual</option>
-        <option value="gezellig">🎉 Gezellig</option>
-        <option value="zakelijk">💼 Zakelijk</option>
+        <option value="romantisch"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Romantisch</option>
+        <option value="casual"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg> Casual</option>
+        <option value="gezellig"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Gezellig</option>
+        <option value="zakelijk"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> Zakelijk</option>
       </select>
     </div>
     <div class="filter-group">
-      <span class="filter-label">👥 Groep</span>
+      <span class="filter-label"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Groep</span>
       <div class="groep-input">
         <button class="groep-btn" id="groep-min">−</button>
         <span id="groep-val">Alle</span>
@@ -607,7 +666,7 @@
     <div class="modal-body">
       <div class="modal-header">
         <div class="modal-naam" id="modal-naam"></div>
-        <button class="modal-close" id="modal-close">✕</button>
+        <button class="modal-close" id="modal-close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       </div>
       <div class="modal-meta" id="modal-meta"></div>
       <p class="modal-desc" id="modal-desc"></p>
@@ -618,6 +677,10 @@
 </div>
 
 <script>
+// ── Hart SVG constanten (globaal beschikbaar) ─────────────────────────
+const FAV_HEART_FULL  = `<svg width="18" height="18" viewBox="0 0 24 24" fill="#d4622a" stroke="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+const FAV_HEART_EMPTY = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9a7b5c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+
 // ── DATA ─────────────────────────────────────────────────────────────────
 const RESTAURANTS = [
   {
@@ -10308,7 +10371,7 @@ const groepVal    = document.getElementById('groep-val');
 const backdrop    = document.getElementById('modal-backdrop');
 
 // ── Helpers ───────────────────────────────────────────────────────────────
-const vibeLabel = v => ({ romantisch:'💑 Romantisch', casual:'😎 Casual', gezellig:'🎉 Gezellig', zakelijk:'💼 Zakelijk' }[v] || v);
+const vibeLabel = v => ({ romantisch:'Romantisch', casual:'Casual', gezellig:'Gezellig', zakelijk:'Zakelijk' }[v] || v);
 const fallback  = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80';
 
 // ── Filter ────────────────────────────────────────────────────────────────
@@ -10337,7 +10400,7 @@ function render() {
   resultTitle.textContent = [state.cuisine, state.prijs, state.vibe, state.zoek].some(Boolean) ? 'Gefilterde restaurants' : 'Alle restaurants';
 
   if (!list.length) {
-    grid.innerHTML = `<div class="empty"><div class="emoji">🍽️</div><h3>Geen restaurants gevonden</h3><p>Pas je filters aan om meer opties te zien.</p></div>`;
+    grid.innerHTML = `<div class="empty"><div class="emoji"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><line x1="12" y1="2" x2="12" y2="10"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></div><h3>Geen restaurants gevonden</h3><p>Pas je filters aan om meer opties te zien.</p></div>`;
     return;
   }
 
@@ -10355,13 +10418,13 @@ function render() {
         </div>
         <p class="card-desc">${r.beschrijving}</p>
         <div class="card-icons">
-          <span class="icon-pill">👥 ${r.groep_min}–${r.groep_max}p</span>
+          <span class="icon-pill"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> ${r.groep_min}–${r.groep_max}p</span>
           ${r.terras ? '<span class="icon-pill"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg> Terras</span>' : ''}
           ${r.reserveren ? '<span class="icon-pill"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> Reserveren</span>' : ''}
         </div>
       </div>
       <div class="card-footer">
-        <span class="card-adres">📍 ${r.buurt}</span>
+        <span class="card-adres"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ${r.buurt}</span>
         <div style="display:flex;align-items:center;gap:.6rem">
           <div class="rating"><svg width="14" height="14" viewBox="0 0 24 24" fill="#e8a320" stroke="none"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg> ${r.rating}</div>
           <button class="fav-btn" data-id="${r.id}" aria-label="Favoriet" title="Favoriet toevoegen">
@@ -10390,11 +10453,11 @@ function openModal(r) {
   document.getElementById('modal-desc').textContent = r.beschrijving;
   document.getElementById('modal-details').innerHTML = `
     <div class="modal-detail"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> <span><strong>${r.adres}, Utrecht</strong></span></div>
-    <div class="modal-detail">👥 <span><strong>${r.groep_min}–${r.groep_max}</strong> personen</span></div>
-    <div class="modal-detail">⭐ <span><strong>${r.rating}</strong> / 5.0</span></div>
-    <div class="modal-detail">☀️ <span>Terras: <strong>${r.terras ? 'Ja' : 'Nee'}</strong></span></div>
-    <div class="modal-detail">📋 <span>Reserveren: <strong>${r.reserveren ? 'verplicht' : 'niet nodig'}</strong></span></div>
-    <div class="modal-detail">🏘 <span>Buurt: <strong>${r.buurt}</strong></span></div>`;
+    <div class="modal-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> <span><strong>${r.groep_min}–${r.groep_max}</strong> personen</span></div>
+    <div class="modal-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="#e8a320" stroke="none" ><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg> <span><strong>${r.rating}</strong> / 5.0</span></div>
+    <div class="modal-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg> <span>Terras: <strong>${r.terras ? 'Ja' : 'Nee'}</strong></span></div>
+    <div class="modal-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> <span>Reserveren: <strong>${r.reserveren ? 'verplicht' : 'niet nodig'}</strong></span></div>
+    <div class="modal-detail"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> <span>Buurt: <strong>${r.buurt}</strong></span></div>`;
   document.getElementById('modal-actions').innerHTML = `
     ${r.website
       ? `<a class="btn-primary" href="${r.website}" target="_blank" rel="noopener">Naar website →</a>`
@@ -10808,7 +10871,7 @@ render();
         <h2>Keuzehulp</h2>
         <p id="kh-header-sub">Beantwoord een paar vragen — wij vinden je top 5</p>
       </div>
-      <button class="kh-close" id="kh-close">✕</button>
+      <button class="kh-close" id="kh-close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
 
     <div class="kh-progress-track">
@@ -10823,32 +10886,32 @@ render();
         <h3>Wat is de gelegenheid?</h3>
         <div class="kh-options cols-2">
           <div class="kh-opt" data-step="0" data-val="romantisch">
-            <div class="kh-opt-icon">💑</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
             <div class="kh-opt-label">Romantisch diner</div>
             <div class="kh-opt-sub">Date of jubileum</div>
           </div>
           <div class="kh-opt" data-step="0" data-val="zakelijk">
-            <div class="kh-opt-icon">💼</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
             <div class="kh-opt-label">Zakelijk</div>
             <div class="kh-opt-sub">Lunch of diner met klant</div>
           </div>
           <div class="kh-opt" data-step="0" data-val="gezellig">
-            <div class="kh-opt-icon">🎉</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
             <div class="kh-opt-label">Vriendengroep</div>
             <div class="kh-opt-sub">Gezellig samenzijn</div>
           </div>
           <div class="kh-opt" data-step="0" data-val="casual">
-            <div class="kh-opt-icon">😎</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg></div>
             <div class="kh-opt-label">Casual</div>
             <div class="kh-opt-sub">Gewoon lekker eten</div>
           </div>
           <div class="kh-opt" data-step="0" data-val="familie">
-            <div class="kh-opt-icon">👨‍👩‍👧</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><circle cx="19" cy="11" r="2"/><path d="M23 21v-1a4 4 0 0 0-3-3.87"/></svg></div>
             <div class="kh-opt-label">Familie</div>
             <div class="kh-opt-sub">Inclusief kinderen</div>
           </div>
           <div class="kh-opt" data-step="0" data-val="solo">
-            <div class="kh-opt-icon">🧘</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg></div>
             <div class="kh-opt-label">Solo</div>
             <div class="kh-opt-sub">Alleen eten</div>
           </div>
@@ -10861,17 +10924,17 @@ render();
         <h3>Wat is je budget per persoon?</h3>
         <div class="kh-options">
           <div class="kh-opt" data-step="1" data-val="€">
-            <div class="kh-opt-icon">🪙</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10"/><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
             <div class="kh-opt-label">Budget — €</div>
             <div class="kh-opt-sub">Onder de €20 per persoon</div>
           </div>
           <div class="kh-opt" data-step="1" data-val="€€">
-            <div class="kh-opt-icon">💳</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
             <div class="kh-opt-label">Midden — €€</div>
             <div class="kh-opt-sub">Tussen €20 en €50 per persoon</div>
           </div>
           <div class="kh-opt" data-step="1" data-val="€€€">
-            <div class="kh-opt-icon">💎</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg></div>
             <div class="kh-opt-label">Luxe — €€€</div>
             <div class="kh-opt-sub">Geen bezwaar, kwaliteit telt</div>
           </div>
@@ -10884,27 +10947,27 @@ render();
         <h3>Met hoeveel personen ga je?</h3>
         <div class="kh-options cols-2">
           <div class="kh-opt" data-step="2" data-val="1">
-            <div class="kh-opt-icon">🧍</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg></div>
             <div class="kh-opt-label">Solo</div>
             <div class="kh-opt-sub">1 persoon</div>
           </div>
           <div class="kh-opt" data-step="2" data-val="2">
-            <div class="kh-opt-icon">👫</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><circle cx="19" cy="11" r="2"/><path d="M23 21v-1a4 4 0 0 0-3-3.87"/></svg></div>
             <div class="kh-opt-label">Tweetje</div>
             <div class="kh-opt-sub">2 personen</div>
           </div>
           <div class="kh-opt" data-step="2" data-val="4">
-            <div class="kh-opt-icon">👥</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
             <div class="kh-opt-label">Klein gezelschap</div>
             <div class="kh-opt-sub">3 tot 6 personen</div>
           </div>
           <div class="kh-opt" data-step="2" data-val="10">
-            <div class="kh-opt-icon">🎊</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
             <div class="kh-opt-label">Grote groep</div>
             <div class="kh-opt-sub">7 tot 15 personen</div>
           </div>
           <div class="kh-opt" data-step="2" data-val="20">
-            <div class="kh-opt-icon">🏟</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
             <div class="kh-opt-label">Heel groot</div>
             <div class="kh-opt-sub">16+ personen</div>
           </div>
@@ -10917,39 +10980,39 @@ render();
         <h3>Heb je een voorkeur voor een keuken?</h3>
         <div class="kh-options cols-3">
           <div class="kh-opt" data-step="3" data-val="Aziatisch|Japans|Chinees|Thais|Vietnamees|Koreaans|Indonesisch">
-            <div class="kh-opt-icon">🥢</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/><path d="M8 12h8M12 8v8"/></svg></div>
             <div class="kh-opt-label">Aziatisch</div>
           </div>
           <div class="kh-opt" data-step="3" data-val="Italiaans">
-            <div class="kh-opt-icon">🍝</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg></div>
             <div class="kh-opt-label">Italiaans</div>
           </div>
           <div class="kh-opt" data-step="3" data-val="Frans|Frans-Modern">
-            <div class="kh-opt-icon">🥐</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M17 8C8 10 5.9 16.17 3.82 20"/><path d="M9.1 17.4C9.93 16.1 10.87 15 12 14c3-3 6-4 8-2"/></svg></div>
             <div class="kh-opt-label">Frans</div>
           </div>
           <div class="kh-opt" data-step="3" data-val="Spaans|Mediterraans">
-            <div class="kh-opt-icon">🥘</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
             <div class="kh-opt-label">Spaans</div>
           </div>
           <div class="kh-opt" data-step="3" data-val="Nederlands">
-            <div class="kh-opt-icon">🧀</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
             <div class="kh-opt-label">Nederlands</div>
           </div>
           <div class="kh-opt" data-step="3" data-val="Indiaas">
-            <div class="kh-opt-icon">🍛</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
             <div class="kh-opt-label">Indiaas</div>
           </div>
           <div class="kh-opt" data-step="3" data-val="Vis & Zeevruchten">
-            <div class="kh-opt-icon">🐟</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M21 8a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21"/><path d="M3 3l4.6 4.6A8.5 8.5 0 0 1 12 6a8.5 8.5 0 0 1 7.6 4.7"/></svg></div>
             <div class="kh-opt-label">Vis</div>
           </div>
           <div class="kh-opt" data-step="3" data-val="Burger & Street|Fusion|Fusion">
-            <div class="kh-opt-icon">🍔</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
             <div class="kh-opt-label">Street food</div>
           </div>
           <div class="kh-opt" data-step="3" data-val="any">
-            <div class="kh-opt-icon">🌍</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
             <div class="kh-opt-label">Alles prima</div>
           </div>
         </div>
@@ -10961,12 +11024,12 @@ render();
         <h3>Wil je buiten kunnen zitten?</h3>
         <div class="kh-options cols-2">
           <div class="kh-opt" data-step="4" data-val="yes">
-            <div class="kh-opt-icon">☀️</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
             <div class="kh-opt-label">Terras graag</div>
             <div class="kh-opt-sub">Liefst buiten</div>
           </div>
           <div class="kh-opt" data-step="4" data-val="no">
-            <div class="kh-opt-icon">🏠</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
             <div class="kh-opt-label">Maakt niet uit</div>
             <div class="kh-opt-sub">Binnen is ook prima</div>
           </div>
@@ -10979,12 +11042,12 @@ render();
         <h3>Ga je spontaan of wil je reserveren?</h3>
         <div class="kh-options cols-2">
           <div class="kh-opt" data-step="5" data-val="spontaan">
-            <div class="kh-opt-icon">⚡</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
             <div class="kh-opt-label">Spontaan</div>
             <div class="kh-opt-sub">Gewoon binnenlopen</div>
           </div>
           <div class="kh-opt" data-step="5" data-val="reserveren">
-            <div class="kh-opt-icon">📋</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
             <div class="kh-opt-label">Ik reserveer</div>
             <div class="kh-opt-sub">Geen probleem om te plannen</div>
           </div>
@@ -10997,17 +11060,17 @@ render();
         <h3>Wat vind je belangrijker?</h3>
         <div class="kh-options">
           <div class="kh-opt" data-step="6" data-val="kwaliteit">
-            <div class="kh-opt-icon">⭐</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="#e8a320" stroke="none" ><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg></div>
             <div class="kh-opt-label">Kwaliteit van het eten</div>
             <div class="kh-opt-sub">Michelin, Gault&Millau, topchefs</div>
           </div>
           <div class="kh-opt" data-step="6" data-val="sfeer">
-            <div class="kh-opt-icon">🎶</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
             <div class="kh-opt-label">Sfeer en beleving</div>
             <div class="kh-opt-sub">Gezellige avond, goede vibe</div>
           </div>
           <div class="kh-opt" data-step="6" data-val="balans">
-            <div class="kh-opt-icon">⚖️</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
             <div class="kh-opt-label">Balans tussen beide</div>
             <div class="kh-opt-sub">Lekker eten én een fijne sfeer</div>
           </div>
@@ -11020,17 +11083,17 @@ render();
         <h3>Wanneer ga je eten?</h3>
         <div class="kh-options cols-3">
           <div class="kh-opt" data-step="7" data-val="lunch">
-            <div class="kh-opt-icon">🌤</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
             <div class="kh-opt-label">Lunch</div>
             <div class="kh-opt-sub">Overdag</div>
           </div>
           <div class="kh-opt" data-step="7" data-val="diner">
-            <div class="kh-opt-icon">🌙</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
             <div class="kh-opt-label">Diner</div>
             <div class="kh-opt-sub">Avond</div>
           </div>
           <div class="kh-opt" data-step="7" data-val="any">
-            <div class="kh-opt-icon">🕐</div>
+            <div class="kh-opt-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
             <div class="kh-opt-label">Maakt niet uit</div>
           </div>
         </div>
@@ -11039,7 +11102,7 @@ render();
       <!-- Resultaten -->
       <div class="kh-results" id="kh-results">
         <div class="kh-result-header">
-          <h3>🎯 Jouw top 5</h3>
+          <h3>Jouw top 5</h3>
           <p id="kh-result-sub">Op basis van jouw antwoorden</p>
         </div>
         <div id="kh-result-list"></div>
@@ -11313,7 +11376,7 @@ function showResults() {
       <div class="rp-header-inner">
         <button class="rp-back" id="rp-back">← Terug naar overzicht</button>
         <div class="rp-title-wrap">
-          <div class="rp-eyebrow">🎯 Keuzehulp resultaten</div>
+          <div class="rp-eyebrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Keuzehulp resultaten</div>
           <h1 class="rp-title">${label}</h1>
           <p class="rp-sub">Gesorteerd op beste match met jouw antwoorden · ${scored.length} restaurants gescand</p>
         </div>
@@ -11429,11 +11492,11 @@ function renderResultCard(r, score, i) {
               <span class="rp-tag">${r.cuisine}</span>
               <span class="rp-tag rp-tag-prijs">${r.prijs} · ${priceLabel}</span>
               ${r.vibe ? r.vibe.map(v => `<span class="rp-tag rp-tag-vibe">${v}</span>`).join('') : ''}
-              ${r.terras ? '<span class="rp-tag">☀️ Terras</span>' : ''}
-              ${!r.reserveren ? '<span class="rp-tag">⚡ Geen res.</span>' : ''}
+              ${r.terras ? '<span class="rp-tag"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg> Terras</span>' : ''}
+              ${!r.reserveren ? '<span class="rp-tag"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Geen res.</span>' : ''}
             </div>
           </div>
-          <div class="rp-rating">★ ${r.rating}</div>
+          <div class="rp-rating"><svg width="14" height="14" viewBox="0 0 24 24" fill="#e8a320" stroke="none"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg> ${r.rating}</div>
         </div>
 
         <p class="rp-card-desc">${r.beschrijving || ''}</p>
@@ -11812,7 +11875,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeWizard(
   <div class="auth-modal">
     <div class="auth-modal-header">
       <h2 id="auth-modal-title">Mijn account</h2>
-      <button class="auth-modal-close" id="auth-modal-close">✕</button>
+      <button class="auth-modal-close" id="auth-modal-close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="auth-body" id="auth-body">
       <div class="auth-tabs">
@@ -11861,8 +11924,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeWizard(
 // ════════════════════════════════════════════════════════
 
 // ── SVG Icon constanten ────────────────────────────────────────────────
-const FAV_HEART_FULL  = `<svg width="18" height="18" viewBox="0 0 24 24" fill="#d4622a" stroke="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
-const FAV_HEART_EMPTY = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9a7b5c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+// FAV_HEART constanten zijn globaal gedeclareerd
 
 const SUPA_URL = 'https://gcvigtfkznewllxulnpf.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdjdmlndGZrem5ld2xseHVsbnBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MzI5OTgsImV4cCI6MjA5NDAwODk5OH0.ms7ZY57mo0X1gAYX_yDUs7jgAj1K_EIydgrVOSK15R8';
@@ -11962,7 +12024,7 @@ function updateAuthBtn() {
     authBtn.innerHTML = initials + (count > 0 ? `<span class="fav-count-dot">${count}</span>` : '');
     authBtn.title = 'Mijn favorieten';
   } else {
-    authBtn.innerHTML = '👤';
+    authBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
     authBtn.title = 'Inloggen';
   }
 }
@@ -12112,7 +12174,7 @@ function renderFavPage() {
   if (ids.length === 0) {
     fpContent.innerHTML = `
       <div class="fp-empty">
-        <div class="fp-empty-icon">🤍</div>
+        <div class="fp-empty-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
         <h3>Nog geen favorieten</h3>
         <p>Klik op het hartje bij een restaurant om het op te slaan.</p>
       </div>`;

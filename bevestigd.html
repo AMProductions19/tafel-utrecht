@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account bevestigd — Tafel Utrecht</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #faf6ef; --brown: #5c3a1e; --orange: #d4622a;
+      --orange-lt: #e8834e; --muted: #9a7b5c; --border: #e2cfb8;
+      --paper: #fdf8f2; --text: #2d1f0e;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 3rem 2.5rem;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 8px 40px rgba(92,58,30,.12);
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--brown);
+      margin-bottom: 2rem;
+    }
+    .logo span { color: var(--orange); }
+    .icon { font-size: 3.5rem; margin-bottom: 1rem; }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: var(--brown);
+      margin-bottom: .6rem;
+    }
+    p { color: var(--muted); font-size: .95rem; line-height: 1.6; margin-bottom: 1.5rem; }
+
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--orange);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      margin: 1rem auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .btn {
+      display: inline-block;
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: .85rem 2rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .2s;
+    }
+    .btn:hover { background: var(--brown); }
+
+    .status { font-size: .85rem; color: var(--muted); margin-top: 1rem; }
+    .status.ok  { color: #5a9e5a; }
+    .status.err { color: #c0392b; }
+
+    .countdown {
+      font-size: .82rem;
+      color: var(--muted);
+      margin-top: .8rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card" id="card">
+  <div class="logo">Tafel <span>Utrecht</span></div>
+  <div class="icon" id="icon">⏳</div>
+  <h1 id="title">Account bevestigen…</h1>
+  <p id="msg">We controleren je bevestigingslink.</p>
+  <div class="spinner" id="spinner"></div>
+  <div class="status" id="status"></div>
+  <div class="countdown" id="countdown"></div>
+</div>
+
+<script>
+const SUPA_URL = 'https://gcvigtfkznewllxulnpf.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdjdmlndGZrem5ld2xseHVsbnBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MzI5OTgsImV4cCI6MjA5NDAwODk5OH0.ms7ZY57mo0X1gAYX_yDUs7jgAj1K_EIydgrVOSK15R8';
+const APP_URL = 'https://amproductions19.github.io/tafel-utrecht/';
+
+const supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+const icon      = document.getElementById('icon');
+const title     = document.getElementById('title');
+const msg       = document.getElementById('msg');
+const spinner   = document.getElementById('spinner');
+const statusEl  = document.getElementById('status');
+const countdown = document.getElementById('countdown');
+
+function showSuccess() {
+  icon.textContent = '🎉';
+  title.textContent = 'Account bevestigd!';
+  msg.textContent = 'Je bent ingelogd. Je wordt zo doorgestuurd naar de app.';
+  spinner.style.display = 'none';
+  statusEl.className = 'status ok';
+  statusEl.textContent = '✅ Ingelogd';
+
+  // Countdown
+  let sec = 3;
+  countdown.textContent = `Doorsturen in ${sec} seconden…`;
+  const timer = setInterval(() => {
+    sec--;
+    if (sec <= 0) {
+      clearInterval(timer);
+      window.location.href = APP_URL;
+    } else {
+      countdown.textContent = `Doorsturen in ${sec} seconden…`;
+    }
+  }, 1000);
+}
+
+function showError(tekst) {
+  icon.textContent = '😕';
+  title.textContent = 'Iets ging mis';
+  msg.textContent = tekst || 'De bevestigingslink is verlopen of ongeldig.';
+  spinner.style.display = 'none';
+  statusEl.className = 'status err';
+  statusEl.textContent = 'Probeer opnieuw te registreren.';
+
+  // Knop naar app
+  countdown.innerHTML = `<a class="btn" href="${APP_URL}" style="margin-top:.5rem">Ga naar de app</a>`;
+}
+
+async function handleConfirmation() {
+  // Supabase plaatst tokens in de URL hash (#access_token=...&type=signup)
+  // of als query params (?token_hash=...&type=signup) afhankelijk van versie
+  const hash   = window.location.hash.substring(1);
+  const params = new URLSearchParams(window.location.search);
+
+  // Methode 1: hash-gebaseerd (oudere flow)
+  if (hash.includes('access_token')) {
+    const hashParams = new URLSearchParams(hash);
+    const accessToken  = hashParams.get('access_token');
+    const refreshToken = hashParams.get('refresh_token');
+    const type         = hashParams.get('type');
+
+    if (accessToken && (type === 'signup' || type === 'email_change' || type === 'recovery')) {
+      const { error } = await supa.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+      if (error) { showError(error.message); return; }
+      showSuccess();
+      return;
+    }
+  }
+
+  // Methode 2: token_hash (nieuwere PKCE flow)
+  const tokenHash = params.get('token_hash');
+  const type      = params.get('type');
+
+  if (tokenHash && type) {
+    const { error } = await supa.auth.verifyOtp({ token_hash: tokenHash, type });
+    if (error) { showError(error.message); return; }
+    showSuccess();
+    return;
+  }
+
+  // Methode 3: Supabase heeft sessie al automatisch opgepakt
+  const { data: { session } } = await supa.auth.getSession();
+  if (session) {
+    showSuccess();
+    return;
+  }
+
+  // Niets gevonden
+  showError('Geen geldige bevestigingslink gevonden.');
+}
+
+// Wacht even zodat Supabase de hash kan verwerken
+setTimeout(handleConfirmation, 300);
+</script>
+</body>
+</html>

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smaakprofiel Quiz</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #faf9f7;
+      --bg2: #f2f0ec;
+      --bg3: #e8e5e0;
+      --text: #1a1a18;
+      --text2: #5a5a56;
+      --text3: #8a8a84;
+      --border: rgba(0,0,0,0.1);
+      --border2: rgba(0,0,0,0.18);
+      --accent: #c2410c;
+      --accent-bg: #fff7f3;
+      --accent-border: #f0a080;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem;
+    }
+
+    /* ── QUIZ ── */
+    #quiz-screen { display: block; }
+
+    .quiz-header { margin-bottom: 2rem; }
+    .quiz-header h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
+    .quiz-header p { font-size: 14px; color: var(--text2); }
+
+    .progress-bar { height: 3px; background: var(--bg3); border-radius: 2px; margin-bottom: 2rem; }
+    .progress-fill { height: 3px; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; }
+
+    .question-block { display: none; }
+    .question-block.active { display: block; }
+
+    .question-num { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 0.5rem; }
+    .question-text { font-size: 17px; font-weight: 500; color: var(--text); margin-bottom: 1.25rem; line-height: 1.5; }
+
+    .options { display: flex; flex-direction: column; gap: 0.5rem; }
+    .options.multi-col { flex-direction: row; flex-wrap: wrap; }
+
+    .option-btn {
+      background: var(--bg);
+      border: 1.5px solid var(--border2);
+      border-radius: var(--radius-sm);
+      padding: 0.7rem 1rem;
+      font-size: 14px;
+      color: var(--text2);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+      line-height: 1.5;
+    }
+    .option-btn:hover { border-color: var(--accent); color: var(--text); }
+    .option-btn.selected { border-color: var(--accent); background: var(--accent-bg); color: var(--text); }
+    .options.multi-col .option-btn { flex: 1 1 calc(50% - 0.25rem); min-width: 160px; }
+
+    .quote-option {
+      background: var(--bg);
+      border: 1.5px solid var(--border2);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem;
+      font-size: 14px;
+      font-style: italic;
+      color: var(--text2);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+      line-height: 1.6;
+    }
+    .quote-option:hover { border-color: var(--accent); color: var(--text); }
+    .quote-option.selected { border-color: var(--accent); background: var(--accent-bg); color: var(--text); }
+
+    .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; }
+    .btn-back { background: none; border: 1.5px solid var(--border2); border-radius: var(--radius-sm); padding: 0.6rem 1.25rem; font-size: 14px; color: var(--text2); cursor: pointer; }
+    .btn-back:hover { border-color: var(--text3); }
+    .btn-next { background: var(--text); border: none; border-radius: var(--radius-sm); padding: 0.6rem 1.5rem; font-size: 14px; color: var(--bg); cursor: pointer; transition: opacity 0.2s; }
+    .btn-next:disabled { opacity: 0.3; cursor: not-allowed; }
+    .btn-next:not(:disabled):hover { opacity: 0.8; }
+
+    .ludiek-badge { display: inline-block; font-size: 10px; font-weight: 500; background: #dcfce7; color: #15803d; border-radius: 20px; padding: 2px 8px; margin-left: 8px; vertical-align: middle; }
+
+    /* ── LOADING ── */
+    #loading-screen {
+      display: none;
+      min-height: 400px;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 1.5rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .scene {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+      width: 100%;
+      transition: transform 0.65s cubic-bezier(0.22,1,0.36,1), opacity 0.5s ease;
+    }
+    .scene.hidden-left  { transform: translateX(-115%); opacity: 0; pointer-events: none; }
+    .scene.hidden-right { transform: translateX(115%);  opacity: 0; pointer-events: none; }
+    .scene.visible      { transform: translateX(0);     opacity: 1; }
+    .scene-text { font-size: 14px; color: var(--text2); text-align: center; max-width: 260px; line-height: 1.65; }
+
+    .loading-nav { display: flex; gap: 8px; position: absolute; bottom: 0; }
+    .ldot { width: 6px; height: 6px; border-radius: 50%; background: var(--bg3); border: none; cursor: pointer; transition: background 0.3s; }
+    .ldot.active { background: var(--text3); }
+
+    /* ── DASHBOARD ── */
+    #dashboard { display: none; }
+    .dash-header { margin-bottom: 1.5rem; }
+    .dash-title { font-size: 26px; font-weight: 500; }
+    .dash-sub { font-size: 14px; color: var(--text3); margin-top: 4px; }
+
+    .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    @media (max-width: 560px) { .dash-grid { grid-template-columns: 1fr; } }
+
+    .panel { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; }
+    .panel-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text3); margin-bottom: 1rem; }
+
+    .proza { font-size: 14px; color: var(--text2); line-height: 1.8; }
+    .hekel-label { font-size: 11px; font-weight: 500; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; margin: 1rem 0 0.4rem; }
+    .hekel { font-size: 13px; color: var(--text2); line-height: 1.7; padding: 0.6rem 0.85rem; border-left: 2px solid var(--accent-border); background: var(--accent-bg); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+
+    .resto-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.6rem; margin-top: 0.75rem; }
+    .resto-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.85rem 1rem; }
+    .resto-name { font-size: 14px; font-weight: 500; }
+    .resto-type { font-size: 12px; color: var(--text3); margin-top: 2px; }
+    .resto-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+    .rtag { font-size: 11px; background: var(--bg2); border-radius: 20px; padding: 1px 8px; color: var(--text2); border: 1px solid var(--border); }
+
+    .btn-restart { margin-top: 1.5rem; background: none; border: 1.5px solid var(--border2); border-radius: var(--radius-sm); padding: 0.6rem 1.25rem; font-size: 14px; color: var(--text2); cursor: pointer; }
+    .btn-restart:hover { border-color: var(--text3); }
+
+    /* ── SVG animations ── */
+    #brow-r { transform-origin: 88px 88px; animation: browup 3s ease-in-out infinite; }
+    #arm-spatel { transform-origin: 108px 128px; animation: spatswing 2s ease-in-out infinite; }
+    @keyframes browup { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-8px)} }
+    @keyframes spatswing { 0%,100%{transform:rotate(0deg)} 40%{transform:rotate(-26deg)} 70%{transform:rotate(8deg)} }
+    #spoon { transform-origin: 80px 55px; animation: stir 1.4s ease-in-out infinite; }
+    #i1{animation:fi1 2.4s ease-in infinite} #i2{animation:fi1 2.4s ease-in infinite;animation-delay:.7s} #i3{animation:fi1 2.4s ease-in infinite;animation-delay:1.3s}
+    @keyframes stir{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(20deg)}}
+    @keyframes fi1{0%{transform:translateY(-35px);opacity:0}15%{opacity:1}55%{transform:translateY(4px);opacity:1}75%,100%{transform:translateY(4px);opacity:0}}
+    #fk{transform-origin:38px 65px;animation:fktap 1.6s ease-in-out infinite}
+    #kn{transform-origin:98px 65px;animation:kntap 1.6s ease-in-out infinite;animation-delay:.8s}
+    #pl{animation:plwob 2.4s ease-in-out infinite;transform-origin:70px 82px}
+    .sp{animation:sprk 1.8s ease-in-out infinite}
+    @keyframes fktap{0%,100%{transform:rotate(0deg) translateY(0)}40%{transform:rotate(-14deg) translateY(-8px)}}
+    @keyframes kntap{0%,100%{transform:rotate(0deg) translateY(0)}40%{transform:rotate(14deg) translateY(-8px)}}
+    @keyframes plwob{0%,100%{transform:scaleX(1)}50%{transform:scaleX(1.03)}}
+    @keyframes sprk{0%,100%{opacity:0;transform:scale(0.4)}50%{opacity:1;transform:scale(1.3)}}
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ── QUIZ ── -->
+  <div id="quiz-screen">
+    <div class="quiz-header">
+      <h1>Wat is jouw smaakprofiel?</h1>
+      <p>11 vragen · duurt ongeveer 2 minuten</p>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+
+    <!-- 1.1 -->
+    <div class="question-block active" id="q0">
+      <div class="question-num">Vraag 1 van 11</div>
+      <div class="question-text">Waar ga je het liefst voor?<br><small style="font-size:13px;font-weight:400;color:var(--text3)">Meerdere antwoorden mogelijk</small></div>
+      <div class="options multi-col" data-multi="true">
+        <button class="option-btn" data-value="Frans">Moules-frites en een kaasplankje, s'il vous plaît</button>
+        <button class="option-btn" data-value="Duits">Een schnitzel zo groot als m'n hoofd</button>
+        <button class="option-btn" data-value="Hollands">Stamppot, haring, of gewoon een goede kroket</button>
+        <button class="option-btn" data-value="Mediterraan">Pasta, pizza, olijfolie over alles</button>
+        <button class="option-btn" data-value="Aziatisch">Ramen, sushi of dim sum — hoe authentieker hoe beter</button>
+        <button class="option-btn" data-value="Streetfood">Street food, gewoon lekker van de kar</button>
+      </div>
+    </div>
+
+    <!-- 1.2 -->
+    <div class="question-block" id="q1">
+      <div class="question-num">Vraag 2 van 11</div>
+      <div class="question-text">Hoe staat het met vlees en vis?</div>
+      <div class="options">
+        <button class="option-btn" data-value="alles">Alles mag — lekker visje en vlees is een feest</button>
+        <button class="option-btn" data-value="vlees">Vlees ja, maar een visje? Liever niet</button>
+        <button class="option-btn" data-value="vis">Vis prima, maar geen vlees aan tafel</button>
+        <button class="option-btn" data-value="matig">Ik laat het kippetje om de dag staan</button>
+        <button class="option-btn" data-value="vega">Geen van beide — ik hou het bij groenten</button>
+      </div>
+    </div>
+
+    <!-- 1.3 -->
+    <div class="question-block" id="q2">
+      <div class="question-num">Vraag 3 van 11</div>
+      <div class="question-text">Hoe staat het met pit en kruid?</div>
+      <div class="options">
+        <button class="option-btn" data-value="pittig">Geef maar extra sambal, ik kan het aan</button>
+        <button class="option-btn" data-value="beetje">Beetje pit is prima, maar ik wil m'n tong nog voelen</button>
+        <button class="option-btn" data-value="neutraal">Gewoon lekker smaakvol, niet te gek</button>
+        <button class="option-btn" data-value="mild">Hou het rustig — peper en zout is al spannend genoeg</button>
+      </div>
+    </div>
+
+    <!-- 2.1 -->
+    <div class="question-block" id="q3">
+      <div class="question-num">Vraag 4 van 11</div>
+      <div class="question-text">Hoe staat het met de sfeer?</div>
+      <div class="options">
+        <button class="option-btn" data-value="bruisend">Gezellig en bruisend — vol leven op de achtergrond</button>
+        <button class="option-btn" data-value="intiem">Rustig en intiem — de ober hoort je gewoon</button>
+        <button class="option-btn" data-value="chic">Chiquer — witte tafelkleden en een degustatiemenu</button>
+        <button class="option-btn" data-value="terras">Buiten zitten — de locatie is het halve gerecht</button>
+        <button class="option-btn" data-value="eten_eerst">Maakt me niet uit, als het eten maar goed is</button>
+      </div>
+    </div>
+
+    <!-- 2.2 -->
+    <div class="question-block" id="q4">
+      <div class="question-num">Vraag 5 van 11</div>
+      <div class="question-text">En hoe staat het met het budget?</div>
+      <div class="options">
+        <button class="option-btn" data-value="laag">Goedkoop en lekker — dat is de heilige graal</button>
+        <button class="option-btn" data-value="middel">Gewoon een eerlijke prijs voor een goed bord</button>
+        <button class="option-btn" data-value="hoog">Prijs mag wat zijn als het klopt</button>
+        <button class="option-btn" data-value="finedining">Fine dining, af en toe mag je jezelf trakteren</button>
+      </div>
+    </div>
+
+    <!-- 2.3 -->
+    <div class="question-block" id="q5">
+      <div class="question-num">Vraag 6 van 11</div>
+      <div class="question-text">Hoe avontuurlijk ben je aan tafel?</div>
+      <div class="options">
+        <button class="option-btn" data-value="altijd">Ik bestel altijd het vreemdste op de kaart</button>
+        <button class="option-btn" data-value="beetje">Iets nieuws mag, maar ik hou een vluchtoptie achter de hand</button>
+        <button class="option-btn" data-value="klassiek">Klassiekers zijn klassiekers om een reden</button>
+        <button class="option-btn" data-value="vast">Ik weet wat ik lekker vind — en dat bestel ik gewoon</button>
+      </div>
+    </div>
+
+    <!-- 2.4 -->
+    <div class="question-block" id="q6">
+      <div class="question-num">Vraag 7 van 11</div>
+      <div class="question-text">Welke zin past het best bij jou?</div>
+      <div class="options">
+        <button class="quote-option" data-value="beleving">"Ik maak een reservering drie weken van tevoren. En dat is prima."</button>
+        <button class="quote-option" data-value="eerlijk">"Geef mij maar een goed bord waar ik geen verhaal bij nodig heb."</button>
+        <button class="quote-option" data-value="gezellig">"Het maakt me niet uit wat we eten als we maar met z'n allen aan tafel zitten."</button>
+        <button class="quote-option" data-value="tanken">"Eten is gewoon tanken. Lekker is mooi meegenomen."</button>
+        <button class="quote-option" data-value="wereld">"Ik wil iets eten wat ik thuis nooit zou maken. Liefst iets wat ik niet eens kan uitspreken."</button>
+      </div>
+    </div>
+
+    <!-- 3.1 -->
+    <div class="question-block" id="q7">
+      <div class="question-num">Vraag 8 van 11</div>
+      <div class="question-text">Hoe staat het met drinken erbij?</div>
+      <div class="options">
+        <button class="option-btn" data-value="wijn">Een goede wijn — liefst eentje die de ober aanraadt</button>
+        <button class="option-btn" data-value="bier">Gewoon een lekker biertje, doet het altijd</button>
+        <button class="option-btn" data-value="fris">Spa rood of fris, ik hoef niet</button>
+        <button class="option-btn" data-value="cocktail">Iets met een parapluutje erin, of een negroni</button>
+      </div>
+    </div>
+
+    <!-- S1 standaard ludiek -->
+    <div class="question-block" id="q8">
+      <div class="question-num">Vraag 9 van 11 <span class="ludiek-badge">voor de lol</span></div>
+      <div class="question-text">Een bourgondiër definieer ik als…</div>
+      <div class="options">
+        <button class="option-btn" data-value="kwantiteit">Iemand die begint met twee pannenkoeken met kaas en eindigt met twee magnums. En dan nog even kijkt of er nog iets is.</button>
+        <button class="option-btn" data-value="decadent">Decadentie ten top. Witte truffel, Bourgondische wijn, en een gezicht alsof het allemaal heel gewoon is.</button>
+        <button class="option-btn" data-value="welvaartsbuik">Iemand die leeft om te eten, alles probeert, overal van geniet, en daar een bescheiden welvaartsbuik aan overhoudt waar hij stiekem trots op is.</button>
+        <button class="option-btn" data-value="nogeen">Iemand die bij elke maaltijd minstens één keer zegt: "doe mij er nog maar eentje van."</button>
+        <button class="option-btn" data-value="portie">Iemand die een restaurant beoordeelt op de grootte van de portie, de dikte van de saus, en of er voldoende brood bij komt.</button>
+        <button class="option-btn" data-value="kaasje">Gewoon iemand die zegt "ik ben een beetje een bourgondiër" terwijl hij een derde kaasje neemt. We kennen ze allemaal.</button>
+      </div>
+    </div>
+
+    <!-- L2 -->
+    <div class="question-block" id="q9">
+      <div class="question-num">Vraag 10 van 11 <span class="ludiek-badge">voor de lol</span></div>
+      <div class="question-text">Hoe laat zit je het liefst aan tafel?</div>
+      <div class="options">
+        <button class="option-btn" data-value="vroeg">Om 17:30, want ik ben hongerig en ik schaam me er niet voor</button>
+        <button class="option-btn" data-value="normaal">Gewoon rond een uur of 7, als een normaal mens</button>
+        <button class="option-btn" data-value="laat">Pas om 21:00 — dat is toch hoe het hoort?</button>
+        <button class="option-btn" data-value="honger">Wanneer de honger komt, daar houd ik me niet aan schema's</button>
+      </div>
+    </div>
+
+    <!-- L4 -->
+    <div class="question-block" id="q10">
+      <div class="question-num">Vraag 11 van 11 <span class="ludiek-badge">voor de lol</span></div>
+      <div class="question-text">Hoe staat het met het broodmandje?</div>
+      <div class="options">
+        <button class="option-btn" data-value="wacht">Ik wacht netjes — ik ben geen barbaar</button>
+        <button class="option-btn" data-value="eentje">Eén stukje, ik moet nog eten</button>
+        <button class="option-btn" data-value="leeg">Het mandje is leeg voor de ober weg is</button>
+        <button class="option-btn" data-value="meer">Ik vraag of er nog meer is — en ik schaam me er niet voor</button>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" id="btn-back" style="display:none" onclick="prevQ()">← Terug</button>
+      <button class="btn-next" id="btn-next" disabled onclick="nextQ()">Volgende →</button>
+    </div>
+  </div>
+
+  <!-- ── LOADING ── -->
+  <div id="loading-screen" style="display:none; min-height:400px; position:relative;">
+    <div class="scene visible" id="sc0" style="top:0">
+      <svg width="150" height="195" viewBox="0 0 150 195" fill="none" style="margin-top:1rem">
+        <g stroke="#1a1a18" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+          <rect x="46" y="58" width="58" height="10" rx="3"/>
+          <path d="M50 58 Q44 26 75 20 Q106 26 100 58"/>
+          <ellipse cx="75" cy="40" rx="24" ry="18"/>
+          <rect x="44" y="68" width="62" height="48" rx="12"/>
+          <line x1="54" y1="84" x2="66" y2="84" stroke-width="2.4"/>
+          <g id="brow-r"><line x1="80" y1="84" x2="94" y2="84" stroke-width="2.4"/></g>
+          <circle cx="58" cy="96" r="5"/><circle cx="92" cy="96" r="5"/>
+          <circle cx="59" cy="96" r="2" fill="#1a1a18" stroke="none"/>
+          <circle cx="93" cy="96" r="2" fill="#1a1a18" stroke="none"/>
+          <line x1="66" y1="108" x2="84" y2="108"/>
+          <path d="M44 116 Q44 148 48 162 Q54 175 75 177 Q96 175 102 162 Q106 148 106 116"/>
+          <line x1="75" y1="117" x2="75" y2="175"/>
+          <circle cx="75" cy="128" r="2.5" fill="#1a1a18" stroke="none"/>
+          <circle cx="75" cy="142" r="2.5" fill="#1a1a18" stroke="none"/>
+          <circle cx="75" cy="156" r="2.5" fill="#1a1a18" stroke="none"/>
+          <circle cx="75" cy="170" r="2.5" fill="#1a1a18" stroke="none"/>
+          <path d="M44 122 Q32 128 24 142"/>
+          <line x1="24" y1="142" x2="14" y2="158"/><line x1="24" y1="142" x2="12" y2="148"/>
+          <g id="arm-spatel">
+            <path d="M106 122 Q118 128 112 142"/>
+            <line x1="112" y1="122" x2="112" y2="96"/>
+            <rect x="106" y="76" width="12" height="24" rx="2"/>
+            <line x1="108" y1="100" x2="106" y2="88"/>
+            <line x1="112" y1="100" x2="112" y2="88"/>
+            <line x1="116" y1="100" x2="118" y2="88"/>
+          </g>
+        </g>
+      </svg>
+      <p class="scene-text">De chefkok peinst nog drie keer over je smaakprofiel met een opgetrokken wenkbrauw.</p>
+    </div>
+
+    <div class="scene hidden-right" id="sc1" style="top:0">
+      <svg width="130" height="120" viewBox="0 0 130 120" fill="none" style="margin-top:3rem">
+        <g stroke="#1a1a18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+          <g id="i1"><circle cx="34" cy="26" r="6"/><line x1="34" y1="18" x2="34" y2="12"/><line x1="30" y1="14" x2="34" y2="12"/><line x1="38" y1="14" x2="34" y2="12"/></g>
+          <g id="i2"><rect x="59" y="14" width="12" height="12" rx="2"/></g>
+          <g id="i3"><ellipse cx="92" cy="24" rx="7" ry="5"/><line x1="92" y1="17" x2="92" y2="11"/><line x1="88" y1="19" x2="85" y2="13"/><line x1="96" y1="19" x2="99" y2="13"/></g>
+          <path d="M18 72 Q20 98 65 98 Q110 98 112 72"/>
+          <path d="M15 72 Q15 62 65 62 Q115 62 115 72"/>
+          <ellipse cx="65" cy="62" rx="50" ry="9"/>
+          <g id="spoon"><ellipse cx="80" cy="44" rx="8" ry="6"/><line x1="80" y1="50" x2="80" y2="88"/></g>
+        </g>
+      </svg>
+      <p class="scene-text">Even wachten. Het systeem denkt na. Ja, echt.</p>
+    </div>
+
+    <div class="scene hidden-right" id="sc2" style="top:0">
+      <svg width="140" height="130" viewBox="0 0 140 130" fill="none" style="margin-top:2.5rem">
+        <g stroke="#1a1a18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+          <g id="fk"><line x1="38" y1="28" x2="38" y2="88"/><line x1="33" y1="28" x2="33" y2="48"/><line x1="38" y1="28" x2="38" y2="48"/><line x1="43" y1="28" x2="43" y2="48"/><path d="M33 48 Q38 57 43 48"/></g>
+          <g id="kn"><line x1="98" y1="28" x2="98" y2="88"/><path d="M98 28 Q112 40 98 56"/></g>
+          <g id="pl"><ellipse cx="70" cy="82" rx="38" ry="11"/><ellipse cx="70" cy="79" rx="30" ry="8"/><ellipse cx="70" cy="77" rx="18" ry="5"/></g>
+          <g class="sp" style="transform-origin:22px 36px"><line x1="18" y1="32" x2="26" y2="40" stroke-width="2.5"/><line x1="26" y1="32" x2="18" y2="40" stroke-width="2.5"/></g>
+          <g class="sp" style="transform-origin:116px 28px;animation-delay:.6s"><line x1="112" y1="24" x2="120" y2="32" stroke-width="2.5"/><line x1="120" y1="24" x2="112" y2="32" stroke-width="2.5"/></g>
+          <g class="sp" style="transform-origin:120px 58px;animation-delay:1.2s"><line x1="116" y1="54" x2="124" y2="62" stroke-width="2"/><line x1="124" y1="54" x2="116" y2="62" stroke-width="2"/></g>
+        </g>
+      </svg>
+      <p class="scene-text">Het profiel wordt opgemaakt. Bestek ligt al klaar. Servet op schoot, graag.</p>
+    </div>
+
+    <div class="loading-nav" id="lnav" style="bottom:1rem">
+      <button class="ldot active" onclick="goTo(0)"></button>
+      <button class="ldot" onclick="goTo(1)"></button>
+      <button class="ldot" onclick="goTo(2)"></button>
+    </div>
+  </div>
+
+  <!-- ── DASHBOARD ── -->
+  <div id="dashboard">
+    <div class="dash-header">
+      <div class="dash-title" id="dash-title">—</div>
+      <div class="dash-sub">Jouw smaakprofiel · gegenereerd op basis van 11 vragen</div>
+    </div>
+    <div class="dash-grid">
+      <div class="panel">
+        <div class="panel-label">Smaakprofiel</div>
+        <canvas id="radar" width="260" height="260"></canvas>
+      </div>
+      <div class="panel">
+        <div class="panel-label">Jouw profiel</div>
+        <p class="proza" id="dash-proza"></p>
+        <div class="hekel-label">Dit vind jij verschrikkelijk</div>
+        <div class="hekel" id="dash-hekel"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-label">Restaurants die bij jou passen</div>
+      <div class="resto-grid" id="dash-restos"></div>
+    </div>
+    <button class="btn-restart" onclick="restart()">↩ Doe de quiz opnieuw</button>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+const TOTAL = 11;
+let current = 0;
+const answers = {};
+
+const profiles = {
+  Frans: {
+    naam: "De Franse Fanaat",
+    scores: [4, 9, 8, 5, 6, 3],
+    proza: "Reserveert drie weken van tevoren en vindt dat volkomen normaal. Voor jou is een maaltijd een ritueel: de juiste wijn, het juiste licht, een ober die zijn vak verstaat. Je kent het verschil tussen een Bourgogne en een Bordeaux en je zegt dat ook, maar pas als iemand ernaar vraagt. Je eet langzaam, je geniet bewust, en je vindt haast aan tafel een vorm van barbarisme.",
+    hekel: "Restaurants waar de muziek te hard staat om een gesprek te voeren. Een kaart van vier pagina's zonder één gerecht dat er echt toe doet. En mensen die een foto maken van hun bord voordat ze hebben geproefd.",
+    restos: [
+      { naam: "Brasserie Harkema", type: "Frans · Amsterdam", tags: ["wijnkaart", "klassiek"] },
+      { naam: "Bistrot Neuf", type: "Frans · Amsterdam", tags: ["kaasplank", "intiem"] },
+      { naam: "Le Hollandais", type: "Frans-Nederlands · Amsterdam", tags: ["verfijnd", "seizoenskaart"] },
+      { naam: "Vinkeles", type: "Fine dining · Amsterdam", tags: ["michelin", "beleving"] },
+    ]
+  },
+  Duits: {
+    naam: "De Schnitzel Vreter",
+    scores: [3, 5, 4, 3, 9, 6],
+    proza: "Jij wil een bord dat niet past op Instagram maar wel op je maag. Geen amuse, geen microgreens, geen verhaal bij het gerecht van drie alinea's op de kaart. Gewoon veel, warm en lekker. Je bent de eerste die 'doe mij er nog maar eentje van' zegt en de laatste die opstaat van tafel. Eerlijk eten voor een eerlijke prijs — meer heb je niet nodig.",
+    hekel: "Een hoofdgerecht van vijf hapjes op een leisteen plank. Restaurants waar de portie zo klein is dat je op de terugweg nog een broodje haalt. En kelners die uitleggen hoe het gerecht geïnspireerd is op de kindertijd van de chef.",
+    restos: [
+      { naam: "Cafe de Reiger", type: "Hollands-Brussels · Amsterdam", tags: ["stevig", "gezellig"] },
+      { naam: "De Ysbreeker", type: "Grand cafe · Amsterdam", tags: ["ruim", "eerlijk"] },
+      { naam: "Bierbrouwerij IJ", type: "Bruine kroeg · Amsterdam", tags: ["bier", "borrel"] },
+      { naam: "Brouwerij Troost", type: "Brasserie · Amsterdam", tags: ["groot", "levend"] },
+    ]
+  },
+  Hollands: {
+    naam: "De Hollandse Kostman",
+    scores: [3, 6, 4, 2, 8, 3],
+    proza: "Stamppot is geen schande, haring is een kunst en een kroket van de automaat is soms het allerbeste wat er is. Jij hoeft niet verrast te worden aan tafel — je weet wat je lekker vindt en je bestelt dat gewoon. Nuchter, eerlijk en zonder gedoe. Eten is gezelligheid, geen prestatie. En dat smaakt prima.",
+    hekel: "Fusion die nergens op slaat. Sushi met stroopwafel omdat het Dutch-Japanese is. En restaurants die bewust geen zout op tafel zetten omdat de chef dat al heeft gedaan. Laat mij zelf beslissen, dank u.",
+    restos: [
+      { naam: "De Silveren Spiegel", type: "Nederlands · Amsterdam", tags: ["klassiek", "historisch"] },
+      { naam: "Haesje Claes", type: "Hollandse keuken · Amsterdam", tags: ["stamppot", "gezellig"] },
+      { naam: "Greetje", type: "Modern-Nederlands · Amsterdam", tags: ["seizoen", "eerlijk"] },
+      { naam: "Cafe de Jaren", type: "Grand cafe · Amsterdam", tags: ["ruim", "terras"] },
+    ]
+  },
+  Mediterraan: {
+    naam: "De Mediterrane Minnaar",
+    scores: [6, 6, 5, 7, 9, 5],
+    proza: "Jij leeft voor het terrasje, de gedeelde schalen en de fles rose die halverwege de middag verschijnt. Eten is sociaal, niet serieus. Je bestelt te veel, deelt alles, en de maaltijd is pas klaar als niemand meer weet hoe laat het is. Olijfolie over alles, zon op je gezicht, en een rekening die je met z'n allen oplost.",
+    hekel: "Restaurants zonder terras in de zomer. Stijve tafels waar je fluistert en niet mag delen. En een kelner die vraagt of het gerecht voor uzelf is of om te delen — alles is om te delen, dat is het punt.",
+    restos: [
+      { naam: "Toscanini", type: "Italiaans · Amsterdam", tags: ["deelbaar", "wijn"] },
+      { naam: "La Oliva", type: "Spaans · Amsterdam", tags: ["tapas", "gezellig"] },
+      { naam: "Guts & Glory", type: "Eigentijds · Amsterdam", tags: ["gedurfd", "ruim"] },
+      { naam: "Cafe Caron", type: "Frans-Mediterraan · Amsterdam", tags: ["terras", "rose"] },
+    ]
+  },
+  Wereldreiziger: {
+    naam: "De Wereldreiziger",
+    scores: [9, 7, 5, 10, 6, 8],
+    proza: "Jij bestelt altijd het vreemdste op de kaart en vindt dat volkomen logisch. Je hebt een mening over de beste ramen buiten Japan en je ziet eten als een manier om de wereld te begrijpen zonder te vliegen. Hoe onbekender, hoe beter. Hoe authentieker, hoe liever. Je praat na het eten nog een uur door over wat je hebt gegeten en waar het vandaan komt.",
+    hekel: "Restaurants die internationaal zeggen maar pasta, pizza en een Caesar salad serveren. Keukens zonder karakter. En menus waar alles aanpasbaar is — want een gerecht dat overal op lijkt, is nergens goed in.",
+    restos: [
+      { naam: "Blauw", type: "Indonesisch · Amsterdam", tags: ["rijsttafel", "authentiek"] },
+      { naam: "Yamazato", type: "Japans · Amsterdam", tags: ["kaiseki", "precisie"] },
+      { naam: "Long Pura", type: "Indonesisch · Amsterdam", tags: ["pittig", "echt"] },
+      { naam: "Dosa", type: "Zuid-Indiaas · Amsterdam", tags: ["vegetarisch", "zeldzaam"] },
+    ]
+  },
+  Bourgondier: {
+    naam: "De Bourgondier",
+    scores: [6, 8, 7, 5, 9, 6],
+    proza: "Jij begint met brood, eindigt met een digestief en vraagt onderweg of er nog meer van dat is. Een maaltijd is pas geslaagd als iedereen te vol is om op te staan. Je geniet luidruchtig, bestelt royaal en vindt dat leven om te eten geen ondeugd is maar een levenshouding. De rekening komt wel goed — eerst nog een kaasplankje.",
+    hekel: "Restaurants waar de porties een statement zijn over matiging. Mensen die nee dank je zeggen op het toetje zonder er ook maar een seconde over na te denken. En menus met alleen maar kleine gerechten — want jij wil een maaltijd, geen puzzel.",
+    restos: [
+      { naam: "Brasserie Harkema", type: "Frans · Amsterdam", tags: ["royaal", "wijn"] },
+      { naam: "De Silveren Spiegel", type: "Nederlands · Amsterdam", tags: ["klassiek", "intiem"] },
+      { naam: "Bistrot Neuf", type: "Frans · Amsterdam", tags: ["kaasplank", "gezellig"] },
+      { naam: "Guts & Glory", type: "Eigentijds · Amsterdam", tags: ["gedurfd", "ruim"] },
+    ]
+  },
+  Genieter: {
+    naam: "De Stille Genieter",
+    scores: [6, 9, 6, 6, 5, 3],
+    proza: "Jij eet bewust en licht, kiest kwaliteit boven kwantiteit en vindt een klein restaurant met een goede kaart mooier dan een buffet van tien meter. Je wil weten waar het vandaan komt, hoe het gemaakt is en waarom juist dit gerecht. Geen drukte, geen haast — alleen aandacht voor wat er op het bord ligt.",
+    hekel: "Lawaaiige restaurants waar je je eigen gedachten niet kunt horen. Kaarten vol vlees zonder alternatief. En all-you-can-eat concepten — want meer is niet beter, meer is gewoon meer.",
+    restos: [
+      { naam: "Vork", type: "Modern-Nederlands · Amsterdam", tags: ["klein", "seizoen"] },
+      { naam: "Breda", type: "Fine casual · Amsterdam", tags: ["kwaliteit", "rustig"] },
+      { naam: "Choux", type: "Plantaardig · Amsterdam", tags: ["groenten", "creatief"] },
+      { naam: "Greetje", type: "Modern-Nederlands · Amsterdam", tags: ["bewust", "lokaal"] },
+    ]
+  }
+};
+
+function determineProfile(answers) {
+  const keuken = answers.q0 || [];
+  const zin = answers.q6;
+  const avontuur = answers.q5;
+  const budget = answers.q4;
+
+  if (keuken.includes('Duits')) return profiles.Duits;
+  if (keuken.includes('Hollands') && !keuken.includes('Frans') && !keuken.includes('Aziatisch')) return profiles.Hollands;
+  if (keuken.includes('Aziatisch') || avontuur === 'altijd' || zin === 'wereld') return profiles.Wereldreiziger;
+  if (keuken.includes('Mediterraan') && answers.q3 === 'terras') return profiles.Mediterraan;
+  if (keuken.includes('Frans') || zin === 'beleving' || budget === 'finedining') return profiles.Frans;
+  if (zin === 'gezellig' || answers.q3 === 'bruisend') return profiles.Bourgondier;
+  if (answers.q1 === 'vega' || zin === 'tanken') return profiles.Genieter;
+  return profiles.Bourgondier;
+}
+
+function updateProgress() {
+  document.getElementById('progress').style.width = ((current / TOTAL) * 100) + '%';
+}
+
+function updateNav() {
+  document.getElementById('btn-back').style.display = current === 0 ? 'none' : 'inline-block';
+  const block = document.getElementById('q' + current);
+  const selected = block.querySelectorAll('.option-btn.selected, .quote-option.selected');
+  const isMulti = block.querySelector('[data-multi]');
+  document.getElementById('btn-next').disabled = selected.length === 0;
+  document.getElementById('btn-next').textContent = current === TOTAL - 1 ? 'Bekijk mijn profiel →' : 'Volgende →';
+}
+
+document.querySelectorAll('.question-block').forEach(block => {
+  const isMulti = block.querySelector('[data-multi="true"]');
+  block.querySelectorAll('.option-btn, .quote-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (isMulti) {
+        btn.classList.toggle('selected');
+      } else {
+        block.querySelectorAll('.option-btn, .quote-option').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      }
+      const qId = 'q' + current;
+      if (isMulti) {
+        answers[qId] = Array.from(block.querySelectorAll('.selected')).map(b => b.dataset.value);
+      } else {
+        answers[qId] = btn.dataset.value;
+      }
+      updateNav();
+    });
+  });
+});
+
+function nextQ() {
+  if (current < TOTAL - 1) {
+    document.getElementById('q' + current).classList.remove('active');
+    current++;
+    document.getElementById('q' + current).classList.add('active');
+    updateProgress();
+    updateNav();
+  } else {
+    showLoading();
+  }
+}
+
+function prevQ() {
+  if (current > 0) {
+    document.getElementById('q' + current).classList.remove('active');
+    current--;
+    document.getElementById('q' + current).classList.add('active');
+    updateProgress();
+    updateNav();
+  }
+}
+
+// Loading screen logic
+let lcur = 0;
+const lscenes = ['sc0','sc1','sc2'].map(id => document.getElementById(id));
+const ldots = document.querySelectorAll('.ldot');
+
+function goTo(next) {
+  const prev = lcur;
+  if (next === prev) return;
+  lscenes[prev].classList.remove('visible');
+  lscenes[prev].classList.add('hidden-left');
+  lscenes[next].classList.remove('hidden-right','hidden-left');
+  lscenes[next].classList.add('visible');
+  ldots[prev].classList.remove('active');
+  ldots[next].classList.add('active');
+  lcur = next;
+}
+
+function showLoading() {
+  document.getElementById('quiz-screen').style.display = 'none';
+  const ls = document.getElementById('loading-screen');
+  ls.style.display = 'flex';
+
+  let ltimer = setInterval(() => goTo((lcur + 1) % 3), 3000);
+  document.getElementById('lnav').addEventListener('click', () => {
+    clearInterval(ltimer);
+    ltimer = setInterval(() => goTo((lcur + 1) % 3), 3000);
+  });
+
+  setTimeout(() => {
+    clearInterval(ltimer);
+    showDashboard();
+  }, 9500);
+}
+
+let radarChart = null;
+
+function showDashboard() {
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+
+  const profile = determineProfile(answers);
+  document.getElementById('dash-title').textContent = profile.naam;
+  document.getElementById('dash-proza').textContent = profile.proza;
+  document.getElementById('dash-hekel').textContent = profile.hekel;
+
+  const restoGrid = document.getElementById('dash-restos');
+  restoGrid.innerHTML = profile.restos.map(r => `
+    <div class="resto-card">
+      <div class="resto-name">${r.naam}</div>
+      <div class="resto-type">${r.type}</div>
+      <div class="resto-tags">${r.tags.map(t => `<span class="rtag">${t}</span>`).join('')}</div>
+    </div>
+  `).join('');
+
+  if (radarChart) radarChart.destroy();
+  const ctx = document.getElementById('radar').getContext('2d');
+  radarChart = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: ['Avontuurlijk', 'Kwaliteit', 'Budget', 'Internationaal', 'Gezelligheid', 'Pit'],
+      datasets: [{
+        data: profile.scores,
+        borderColor: '#c2410c',
+        backgroundColor: 'rgba(194,65,12,0.1)',
+        borderWidth: 2,
+        pointBackgroundColor: '#c2410c',
+        pointRadius: 4,
+      }]
+    },
+    options: {
+      responsive: false,
+      scales: {
+        r: {
+          min: 0, max: 10,
+          ticks: { stepSize: 2, font: { size: 10 }, color: '#888' },
+          grid: { color: 'rgba(0,0,0,0.08)' },
+          pointLabels: { font: { size: 11 }, color: '#5a5a56' },
+          angleLines: { color: 'rgba(0,0,0,0.08)' },
+        }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+function restart() {
+  current = 0;
+  Object.keys(answers).forEach(k => delete answers[k]);
+  document.querySelectorAll('.option-btn, .quote-option').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.question-block').forEach((b, i) => {
+    b.classList.toggle('active', i === 0);
+  });
+  lscenes.forEach((s, i) => {
+    s.classList.remove('visible','hidden-left');
+    if (i === 0) s.classList.add('visible');
+    else s.classList.add('hidden-right');
+  });
+  lcur = 0;
+  ldots.forEach((d, i) => d.classList.toggle('active', i === 0));
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  updateProgress();
+  updateNav();
+}
+
+updateNav();
+</script>
+</body>
+</html>

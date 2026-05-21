@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Tafel Utrecht — Restaurant Gids</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -501,6 +504,122 @@
   display: block;
 }
 
+
+/* ── Smaakprofiel banner in grid ── */
+.quiz-banner {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, var(--brown) 0%, #7a4526 50%, var(--orange) 100%);
+  border-radius: 20px;
+  padding: 2rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp .4s ease both;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+  border: none;
+  text-align: left;
+  width: 100%;
+}
+.quiz-banner:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(92,58,30,.3);
+}
+.quiz-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+.quiz-banner-left { position: relative; z-index: 1; }
+.quiz-banner-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 50px;
+  padding: .25rem .75rem;
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: rgba(255,255,255,.9);
+  margin-bottom: .75rem;
+}
+.quiz-banner-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: .5rem;
+}
+.quiz-banner-title em {
+  color: var(--orange-lt);
+  font-style: italic;
+}
+.quiz-banner-sub {
+  font-size: .9rem;
+  color: rgba(255,255,255,.7);
+  line-height: 1.5;
+  max-width: 420px;
+}
+.quiz-banner-right {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+.quiz-banner-cta {
+  background: #fff;
+  color: var(--brown);
+  border: none;
+  border-radius: 50px;
+  padding: .85rem 1.8rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  pointer-events: none;
+}
+.quiz-banner:hover .quiz-banner-cta {
+  background: var(--orange);
+  color: #fff;
+  transform: scale(1.03);
+}
+.quiz-banner-steps {
+  display: flex;
+  gap: .4rem;
+  margin-top: .8rem;
+  justify-content: flex-end;
+}
+.quiz-step-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.35);
+}
+.quiz-step-dot.filled { background: rgba(255,255,255,.85); }
+
+@media (max-width: 640px) {
+  .quiz-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.5rem;
+    gap: 1.2rem;
+  }
+  .quiz-banner-right { width: 100%; }
+  .quiz-banner-cta { width: 100%; justify-content: center; }
+  .quiz-banner-steps { justify-content: flex-start; }
+}
+
 /* ════════════════════════════════════════════
    MOBIEL — complete responsive laag
    Alles onder 640px
@@ -593,6 +712,8 @@
 }
 
   </style>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 </head>
 <body>
 
@@ -605,6 +726,7 @@
       <input type="text" id="zoek" placeholder="Zoek restaurant, buurt, cuisine…">
     </div>
     <div class="count-badge" id="header-count"></div>
+    <button class="map-btn" id="map-btn" title="Kaartweergave" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s;flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3,6 9,3 15,6 21,3 21,18 15,21 9,18 3,21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg></button>
     <button class="auth-btn" id="auth-btn" title="Account" style="display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
   </div>
 </header>
@@ -10392,6 +10514,52 @@ function filtered() {
 }
 
 // ── Render ────────────────────────────────────────────────────────────────
+
+// ── Smaakprofiel banner ────────────────────────────────────────────────
+const QUIZ_BANNER_HTML = `
+  <button class="quiz-banner" id="quiz-banner-btn" aria-label="Start smaakprofiel quiz">
+    <div class="quiz-banner-left">
+      <div class="quiz-banner-tag">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        Nieuw
+      </div>
+      <div class="quiz-banner-title">Ontdek jouw <em>perfecte tafel</em><br>in Utrecht</div>
+      <div class="quiz-banner-sub">Beantwoord 8 vragen over sfeer, budget en groep — wij vinden jouw top 5 restaurants op maat.</div>
+    </div>
+    <div class="quiz-banner-right">
+      <div class="quiz-banner-cta">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        Start keuzehulp
+      </div>
+      <div class="quiz-banner-steps">
+        <div class="quiz-step-dot filled"></div>
+        <div class="quiz-step-dot filled"></div>
+        <div class="quiz-step-dot filled"></div>
+        <div class="quiz-step-dot"></div>
+        <div class="quiz-step-dot"></div>
+        <div class="quiz-step-dot"></div>
+        <div class="quiz-step-dot"></div>
+        <div class="quiz-step-dot"></div>
+      </div>
+    </div>
+  </button>`;
+
+function attachBannerClick() {
+  const btn = document.getElementById('quiz-banner-btn');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    window._wizardTarget = null;
+    answers = {};
+    currentStep = 0;
+    results.classList.remove('visible');
+    footer.style.display = 'flex';
+    showStep(0);
+    backdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('kh-header-sub').textContent = 'Beantwoord een paar vragen — wij vinden je top 5';
+  });
+}
+
 function render() {
   const list = filtered();
   const n = list.length;
@@ -10404,7 +10572,8 @@ function render() {
     return;
   }
 
-  grid.innerHTML = list.map((r, i) => `
+  const BANNER_INSERT_AFTER = 6; // na 6e kaart = ~2 rijen
+  const cards = list.map((r, i) => `
     <article class="card" data-id="${r.id}" tabindex="0" style="animation-delay:${Math.min(i*55,400)}ms">
       <img class="card-img" src="${r.afbeelding}" alt="${r.naam}" loading="lazy" onerror="this.src='${fallback}'">
       <div class="card-body">
@@ -10433,7 +10602,17 @@ function render() {
         </div>
       </div>
     </article>
-  `).join('');
+  `);
+
+  // Injecteer banner na de 6e kaart
+  if (cards.length > BANNER_INSERT_AFTER && ![state.cuisine, state.prijs, state.vibe, state.zoek].some(Boolean) && !state.groep) {
+    cards.splice(BANNER_INSERT_AFTER, 0, QUIZ_BANNER_HTML);
+  }
+
+  grid.innerHTML = cards.join('');
+
+  // Banner click
+  attachBannerClick();
 
   grid.querySelectorAll('.card').forEach(card => {
     const open = () => openModal(list.find(r => r.id === +card.dataset.id));
@@ -11108,6 +11287,7 @@ render();
         <div id="kh-result-list"></div>
         <div class="kh-result-actions">
           <button class="kh-action-btn" id="kh-redo">↺ Opnieuw</button>
+          <button class="kh-action-btn" id="kh-map-btn">Op kaart zien</button>
           <button class="kh-action-btn primary" id="kh-filter-btn">Toon alle matches</button>
         </div>
       </div>
@@ -11201,6 +11381,14 @@ nextBtn.addEventListener('click', () => {
   if (currentStep < TOTAL_STEPS - 1) {
     currentStep++;
     showStep(currentStep);
+  } else if (window._wizardTarget === 'map') {
+    // Kaartmodus: score & toon op kaart
+    const scored = RESTAURANTS.map(r => ({ r, score: scoreRestaurant(r) }));
+    scored.sort((a, b) => b.score - a.score);
+    const mapList = scored.filter(x => x.score >= 35).slice(0, 50).map(x => x.r);
+    closeWizard();
+    window._wizardTarget = null;
+    setTimeout(() => openMapPage(mapList), 80);
   } else {
     showResults();
   }
@@ -11381,6 +11569,7 @@ function showResults() {
           <p class="rp-sub">Gesorteerd op beste match met jouw antwoorden · ${scored.length} restaurants gescand</p>
         </div>
         <button class="rp-redo" id="rp-redo">↺ Opnieuw</button>
+        <button class="rp-redo" id="rp-map-btn" style="display:flex;align-items:center;gap:.4rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3,6 9,3 15,6 21,3 21,18 15,21 9,18 3,21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg> Op kaart</button>
       </div>
     </div>
 
@@ -11454,6 +11643,16 @@ function showResults() {
       if (r) { backToApp(); setTimeout(() => openModal(r), 100); }
     });
   });
+
+  // Kaartknop op resultatenpagina
+  const rpMapBtn = document.getElementById('rp-map-btn');
+  if (rpMapBtn) {
+    rpMapBtn.addEventListener('click', () => {
+      const mapList = allScored.filter(x => x.score >= 35).slice(0, 50).map(x => x.r);
+      backToApp();
+      setTimeout(() => openMapPage(mapList), 80);
+    });
+  }
 }
 
 function renderResultCard(r, score, i) {
@@ -11567,6 +11766,7 @@ function backToApp() {
 
 // Redo
 redoBtn.addEventListener('click', () => {
+  window._wizardTarget = null;
   answers = {};
   currentStep = 0;
   results.classList.remove('visible');
@@ -11596,12 +11796,14 @@ function closeWizard() {
 }
 
 fab.addEventListener('click', () => {
+  window._wizardTarget = null; // normale modus → top 5 pagina
   answers = {}; currentStep = 0;
   results.classList.remove('visible');
   footer.style.display = 'flex';
   showStep(0);
   backdrop.classList.add('open');
   document.body.style.overflow = 'hidden';
+  document.getElementById('kh-header-sub').textContent = 'Beantwoord een paar vragen — wij vinden je top 5';
 });
 
 closeBtn.addEventListener('click', closeWizard);
@@ -11915,6 +12117,31 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeWizard(
   </div>
   <div class="fp-body">
     <div id="fp-content"></div>
+  </div>
+</div>
+
+<!-- Kaartpagina -->
+<div id="map-page" style="display:none;position:fixed;inset:0;z-index:150;flex-direction:column;background:var(--cream);">
+  <div id="map-header" style="background:var(--brown);padding:.9rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-shrink:0;z-index:10;box-shadow:0 2px 12px rgba(0,0,0,.3);">
+    <button id="map-back" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85);border-radius:50px;padding:.5rem 1.1rem;font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;white-space:nowrap;flex-shrink:0;">← Terug</button>
+    <div style="flex:1;text-align:center;">
+      <div style="font-family:'Playfair Display',serif;color:#fff;font-size:1.2rem;">Kaart</div>
+      <div style="font-size:.75rem;color:rgba(255,255,255,.55)" id="map-count">Alle restaurants</div>
+    </div>
+    <button id="map-filter-toggle" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85);border-radius:50px;padding:.5rem 1.1rem;font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;white-space:nowrap;flex-shrink:0;">Filters</button>
+  </div>
+  <div id="map-filters" style="background:var(--paper);border-bottom:1px solid var(--border);padding:.8rem 1.5rem;display:none;gap:.8rem;flex-wrap:wrap;align-items:center;">
+    <select id="map-sel-cuisine" style="padding:.45rem .9rem;border-radius:50px;border:1.5px solid var(--border);background:var(--cream);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;"><option value="">Alle keukens</option></select>
+    <select id="map-sel-prijs" style="padding:.45rem .9rem;border-radius:50px;border:1.5px solid var(--border);background:var(--cream);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;"><option value="">Alle prijzen</option><option value="\u20ac">\u20ac Budget</option><option value="\u20ac\u20ac">\u20ac\u20ac Midden</option><option value="\u20ac\u20ac\u20ac">\u20ac\u20ac\u20ac Luxe</option></select>
+    <select id="map-sel-vibe" style="padding:.45rem .9rem;border-radius:50px;border:1.5px solid var(--border);background:var(--cream);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;"><option value="">Alle sferen</option><option value="romantisch">Romantisch</option><option value="casual">Casual</option><option value="gezellig">Gezellig</option><option value="zakelijk">Zakelijk</option></select>
+    <button id="map-reset" style="background:none;border:1.5px solid var(--border);border-radius:50px;padding:.4rem .9rem;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--muted);cursor:pointer;">Reset</button>
+  </div>
+  <div id="map-container" style="flex:1;position:relative;">
+    <div id="map" style="width:100%;height:100%;"></div>
+    <div id="map-loading" style="position:absolute;inset:0;background:var(--cream);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;gap:1rem;">
+      <div style="width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--orange);border-radius:50%;animation:spin .7s linear infinite;"></div>
+      <div style="font-family:'DM Sans',sans-serif;color:var(--muted);font-size:.9rem;" id="map-loading-text">Adressen ophalen...</div>
+    </div>
   </div>
 </div>
 
@@ -12304,6 +12531,270 @@ document.getElementById('logo-home').addEventListener('click', (e) => {
   document.body.style.overflow = '';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
+
+</script>
+
+
+
+<script>
+// ════════════════════════════════════════════════════════
+//  KAART — Leaflet + Nominatim geocoding
+// ════════════════════════════════════════════════════════
+(function() {
+
+const BUURT_COORDS = {
+  Centrum: [52.0907, 5.1214],
+  Lombok:  [52.0877, 5.1050],
+  Oost:    [52.0900, 5.1380],
+  West:    [52.0920, 5.0980],
+  Noord:   [52.1050, 5.1200],
+  Zuid:    [52.0750, 5.1100],
+  default: [52.0907, 5.1214],
+};
+
+const GEO_CACHE = {};
+const RESTAURANT_COORDS = {};
+
+let leafletMap    = null;
+let markerCluster = null;
+let mapInitDone   = false;
+let mapFilters    = { cuisine: '', prijs: '', vibe: '' };
+
+const mapPage      = document.getElementById('map-page');
+const mapLoading   = document.getElementById('map-loading');
+const mapLoadTxt   = document.getElementById('map-loading-text');
+const mapCount     = document.getElementById('map-count');
+const mapBtn       = document.getElementById('map-btn');
+const mapBack      = document.getElementById('map-back');
+const mapFilterBtn = document.getElementById('map-filter-toggle');
+const mapFiltersEl = document.getElementById('map-filters');
+const mapReset     = document.getElementById('map-reset');
+const mapSelCuis   = document.getElementById('map-sel-cuisine');
+const mapSelPrijs  = document.getElementById('map-sel-prijs');
+const mapSelVibe   = document.getElementById('map-sel-vibe');
+
+// Vul cuisine dropdown
+const cuisines = [...new Set(RESTAURANTS.map(r => r.cuisine))].sort();
+cuisines.forEach(c => {
+  const o = document.createElement('option');
+  o.value = c; o.textContent = c;
+  mapSelCuis.appendChild(o);
+});
+
+// ── Geocode via Nominatim ──────────────────────────────
+async function geocodeAdres(adres, buurt) {
+  const q = adres ? `${adres}, Utrecht, Nederland` : `${buurt || 'Utrecht'}, Utrecht, Nederland`;
+  if (GEO_CACHE[q]) return GEO_CACHE[q];
+  try {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=nl&q=${encodeURIComponent(q)}`;
+    const res  = await fetch(url, { headers: { 'Accept-Language': 'nl' } });
+    const data = await res.json();
+    if (data && data[0]) {
+      const coords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+      GEO_CACHE[q] = coords;
+      return coords;
+    }
+  } catch (e) { /* network error – use fallback */ }
+  const base   = BUURT_COORDS[buurt] || BUURT_COORDS.default;
+  const jitter = () => (Math.random() - 0.5) * 0.009;
+  const coords = [base[0] + jitter(), base[1] + jitter()];
+  GEO_CACHE[q] = coords;
+  return coords;
+}
+
+// ── Custom pin-marker ──────────────────────────────────
+function makeIcon(prijs) {
+  const color = prijs === '€€€' ? '#5c3a1e' : prijs === '€€' ? '#d4622a' : '#8b5e3c';
+  const label = prijs || '?';
+  const div   = document.createElement('div');
+  div.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="44" viewBox="0 0 36 44">
+      <path d="M18 0C9.16 0 2 7.16 2 16c0 10.5 16 28 16 28S34 26.5 34 16C34 7.16 26.84 0 18 0z" fill="${color}"/>
+      <circle cx="18" cy="16" r="9" fill="white" fill-opacity="0.92"/>
+      <text x="18" y="20" text-anchor="middle" font-size="8" font-weight="bold"
+            fill="${color}" font-family="DM Sans,sans-serif">${label}</text>
+    </svg>`;
+  return L.divIcon({
+    html: div.innerHTML,
+    iconSize:    [36, 44],
+    iconAnchor:  [18, 44],
+    popupAnchor: [0, -46],
+    className:   '',
+  });
+}
+
+// ── Popup content ──────────────────────────────────────
+function makePopup(r) {
+  const fallback = 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&q=70';
+  const img      = r.afbeelding || fallback;
+  const desc     = (r.beschrijving || '').slice(0, 85) + ((r.beschrijving || '').length > 85 ? '…' : '');
+
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'font-family:DM Sans,sans-serif;min-width:220px;max-width:260px;';
+  wrap.innerHTML = `
+    <img src="${img}" onerror="this.src='${fallback}'"
+         style="width:100%;height:120px;object-fit:cover;border-radius:8px;margin-bottom:.7rem;display:block;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.4rem;margin-bottom:.3rem;">
+      <strong style="font-family:Playfair Display,serif;font-size:.95rem;color:#5c3a1e;line-height:1.2;">${r.naam}</strong>
+      <span style="background:rgba(212,98,42,.1);color:#d4622a;border-radius:50px;padding:.1rem .5rem;font-size:.75rem;font-weight:600;white-space:nowrap;">${r.prijs}</span>
+    </div>
+    <div style="font-size:.75rem;color:#9a7b5c;margin-bottom:.35rem;">${r.cuisine} &nbsp;·&nbsp; ★ ${r.rating}</div>
+    <div style="font-size:.78rem;color:#9a7b5c;line-height:1.4;margin-bottom:.7rem;">${desc}</div>
+    <button data-popupid="${r.id}"
+      style="width:100%;padding:.5rem;background:#d4622a;color:#fff;border:none;border-radius:50px;
+             font-family:DM Sans,sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;">
+      Bekijk details →
+    </button>`;
+
+  wrap.querySelector('button').addEventListener('click', () => {
+    const rest = RESTAURANTS.find(x => x.id === r.id);
+    if (rest) { closeMapPage(); setTimeout(() => openModal(rest), 80); }
+  });
+
+  return wrap;
+}
+
+// ── Filter ─────────────────────────────────────────────
+function getFiltered() {
+  return RESTAURANTS.filter(r => {
+    if (mapFilters.cuisine && r.cuisine !== mapFilters.cuisine) return false;
+    if (mapFilters.prijs   && r.prijs   !== mapFilters.prijs)   return false;
+    if (mapFilters.vibe    && !(r.vibe || []).includes(mapFilters.vibe)) return false;
+    return true;
+  });
+}
+
+// ── Markers laden ──────────────────────────────────────
+async function renderMarkers(restaurants) {
+  mapLoading.style.display = 'flex';
+  markerCluster.clearLayers();
+  const total = restaurants.length;
+  let done = 0;
+  const BATCH = 15;
+
+  for (let i = 0; i < restaurants.length; i += BATCH) {
+    const batch = restaurants.slice(i, i + BATCH);
+    await Promise.all(batch.map(async r => {
+      let coords = RESTAURANT_COORDS[r.id];
+      if (!coords) {
+        coords = await geocodeAdres(r.adres, r.buurt);
+        RESTAURANT_COORDS[r.id] = coords;
+      }
+      const marker = L.marker(coords, { icon: makeIcon(r.prijs) });
+      marker.bindPopup(makePopup(r), { maxWidth: 280 });
+      markerCluster.addLayer(marker);
+      done++;
+    }));
+    mapLoadTxt.textContent = `${done} van ${total} restaurants geladen…`;
+    if (i + BATCH < restaurants.length) await new Promise(res => setTimeout(res, 350));
+  }
+
+  mapLoading.style.display = 'none';
+  mapCount.textContent = `${total} restaurants zichtbaar`;
+  if (markerCluster.getLayers().length > 0) {
+    try { leafletMap.fitBounds(markerCluster.getBounds().pad(0.1)); } catch (e) {}
+  }
+}
+
+// ── Kaart initialiseren ────────────────────────────────
+function initMap() {
+  if (mapInitDone) return;
+  mapInitDone = true;
+
+  leafletMap = L.map('map', { center: [52.0907, 5.1214], zoom: 14 });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a>',
+    maxZoom: 19,
+  }).addTo(leafletMap);
+
+  markerCluster = L.markerClusterGroup({
+    maxClusterRadius: 50,
+    showCoverageOnHover: false,
+    iconCreateFunction(cluster) {
+      const n   = cluster.getChildCount();
+      const div = document.createElement('div');
+      div.style.cssText = `background:#d4622a;color:#fff;border-radius:50%;width:36px;height:36px;
+        display:flex;align-items:center;justify-content:center;
+        font-family:DM Sans,sans-serif;font-weight:600;font-size:.85rem;
+        box-shadow:0 2px 8px rgba(0,0,0,.3);`;
+      div.textContent = n;
+      return L.divIcon({ html: div.outerHTML, iconSize: [36, 36], className: '' });
+    },
+  });
+
+  leafletMap.addLayer(markerCluster);
+}
+
+// ── Pagina open / sluit ────────────────────────────────
+function openMapPage(restaurantsToShow) {
+  // restaurantsToShow = gefilterde lijst van wizard, of undefined voor alles
+  const toShow = restaurantsToShow || getFiltered();
+
+  document.querySelector('header').style.display        = 'none';
+  document.querySelector('.hero').style.display         = 'none';
+  document.querySelector('.filters-bar').style.display  = 'none';
+  document.querySelector('main').style.display          = 'none';
+  document.getElementById('kh-fab').style.display       = 'none';
+  mapPage.style.display = 'flex';
+
+  // Update teller alvast
+  mapCount.textContent = `${toShow.length} restaurants gevonden`;
+
+  setTimeout(() => {
+    initMap();
+    leafletMap.invalidateSize();
+    renderMarkers(toShow);
+  }, 60);
+}
+
+function closeMapPage() {
+  mapPage.style.display = 'none';
+  document.querySelector('header').style.display        = '';
+  document.querySelector('.hero').style.display         = '';
+  document.querySelector('.filters-bar').style.display  = '';
+  document.querySelector('main').style.display          = '';
+  document.getElementById('kh-fab').style.display       = '';
+}
+window.closeMapPage = closeMapPage;
+
+// ── Events ─────────────────────────────────────────────
+mapSelCuis.addEventListener('change',  () => { mapFilters.cuisine = mapSelCuis.value;  renderMarkers(getFiltered()); });
+mapSelPrijs.addEventListener('change', () => { mapFilters.prijs   = mapSelPrijs.value; renderMarkers(getFiltered()); });
+mapSelVibe.addEventListener('change',  () => { mapFilters.vibe    = mapSelVibe.value;  renderMarkers(getFiltered()); });
+
+mapReset.addEventListener('click', () => {
+  mapFilters = { cuisine: '', prijs: '', vibe: '' };
+  mapSelCuis.value = mapSelPrijs.value = mapSelVibe.value = '';
+  renderMarkers(getFiltered());
+});
+
+mapFilterBtn.addEventListener('click', () => {
+  const open = mapFiltersEl.style.display === 'flex';
+  mapFiltersEl.style.display = open ? 'none' : 'flex';
+  mapFilterBtn.style.background = open ? 'rgba(255,255,255,.12)' : 'rgba(212,98,42,.6)';
+});
+
+mapBtn.addEventListener('click', () => {
+  // Sla op dat we naar de kaart willen na de wizard
+  window._wizardTarget = 'map';
+  answers = {}; currentStep = 0;
+  results.classList.remove('visible');
+  footer.style.display = 'flex';
+  showStep(0);
+  backdrop.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  // Pas de header aan zodat het duidelijk is
+  document.getElementById('kh-header-sub').textContent = 'Beantwoord een paar vragen om passende restaurants op de kaart te zien';
+});
+mapBack.addEventListener('click', closeMapPage);
+
+// Logo sluit ook kaart
+document.getElementById('logo-home').addEventListener('click', () => {
+  if (mapPage && mapPage.style.display !== 'none') closeMapPage();
+});
+
+})();
 
 </script>
 

@@ -10548,15 +10548,10 @@ function attachBannerClick() {
   const btn = document.getElementById('quiz-banner-btn');
   if (!btn) return;
   btn.addEventListener('click', () => {
-    window._wizardTarget = null;
-    answers = {};
-    currentStep = 0;
-    results.classList.remove('visible');
-    footer.style.display = 'flex';
-    showStep(0);
-    backdrop.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    document.getElementById('kh-header-sub').textContent = 'Beantwoord een paar vragen — wij vinden je top 5';
+    // Roep de globale wizard-opener aan (gedefinieerd in de keuzehulp IIFE)
+    if (typeof window._openWizard === 'function') {
+      window._openWizard('top5');
+    }
   });
 }
 
@@ -11796,15 +11791,23 @@ function closeWizard() {
 }
 
 fab.addEventListener('click', () => {
-  window._wizardTarget = null; // normale modus → top 5 pagina
+  window._openWizard('top5');
+});
+
+// Globale opener — bruikbaar vanuit andere script blokken
+window._openWizard = function(mode) {
+  window._wizardTarget = mode === 'map' ? 'map' : null;
   answers = {}; currentStep = 0;
   results.classList.remove('visible');
   footer.style.display = 'flex';
   showStep(0);
   backdrop.classList.add('open');
   document.body.style.overflow = 'hidden';
-  document.getElementById('kh-header-sub').textContent = 'Beantwoord een paar vragen — wij vinden je top 5';
-});
+  const sub = mode === 'map'
+    ? 'Beantwoord een paar vragen om passende restaurants op de kaart te zien'
+    : 'Beantwoord een paar vragen — wij vinden je top 5';
+  document.getElementById('kh-header-sub').textContent = sub;
+};
 
 closeBtn.addEventListener('click', closeWizard);
 backdrop.addEventListener('click', e => { if (e.target === backdrop) closeWizard(); });
@@ -12776,16 +12779,9 @@ mapFilterBtn.addEventListener('click', () => {
 });
 
 mapBtn.addEventListener('click', () => {
-  // Sla op dat we naar de kaart willen na de wizard
-  window._wizardTarget = 'map';
-  answers = {}; currentStep = 0;
-  results.classList.remove('visible');
-  footer.style.display = 'flex';
-  showStep(0);
-  backdrop.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  // Pas de header aan zodat het duidelijk is
-  document.getElementById('kh-header-sub').textContent = 'Beantwoord een paar vragen om passende restaurants op de kaart te zien';
+  if (typeof window._openWizard === 'function') {
+    window._openWizard('map');
+  }
 });
 mapBack.addEventListener('click', closeMapPage);
 
